@@ -50,13 +50,26 @@ const quizData = [
         answer: "Pacific Ocean"
     }
 ];
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+const shuffledQuizData = quizData.map(question => ({
+    ...question,
+    options: shuffle([...question.options]) 
+}));
+
+shuffle(shuffledQuizData); 
 
 const quizContainer = document.getElementById('quiz');
 const resultsContainer = document.getElementById('results');
 const submitButton = document.getElementById('submit');
 
 function buildQuiz() {
-    quizData.forEach((question, index) => {
+    shuffledQuizData.forEach((question, index) => {
         const questionDiv = document.createElement('div');
         questionDiv.classList.add('question');
         questionDiv.innerHTML = `
@@ -75,13 +88,13 @@ function buildQuiz() {
 function showResults() {
     const answerContainers = quizContainer.querySelectorAll('.question');
     let score = 0;
-    quizData.forEach((question, index) => {
+    shuffledQuizData.forEach((question, index) => {
         const selectedOption = answerContainers[index].querySelector(`input[name="question${index}"]:checked`);
         if (selectedOption && selectedOption.value === question.answer) {
             score++;
         }
     });
-    resultsContainer.innerHTML = `You scored ${score} out of ${quizData.length}`;
+    resultsContainer.innerHTML = `You scored ${score} out of ${shuffledQuizData.length}`;
 }
 
 buildQuiz();
